@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const{loginPage,adminLogin,logout,dashboard,settings}=require('../controllers/user.controller.js');
+const{loginPage,adminLogin,logout,dashboard,settings,saveSetting}=require('../controllers/user.controller.js');
 const{alluser,addUserPage,addUser,updateUserPage,updateUser,deleteUser}=require('../controllers/user.controller.js');
 const{allCategory,addCategoryPage,addCategory,updateCategoryPage,updateCategory,deleteCategory}=require('../controllers/category.controller.js');
 const{allNews,addNewsPage,addNews,updateNewsPage,updateNews,deleteNews}=require('../controllers/article.controller.js');
@@ -14,7 +14,7 @@ router.post('/index',adminLogin);
 router.get('/logout',isLoggedin,logout);
 router.get('/dashboard',isLoggedin,dashboard);
 router.get('/settings',isLoggedin,isAdmin,settings);
-
+router.post('/save-settings',isLoggedin,isAdmin,upload.single('website_logo'),saveSetting);
 
 //User
 router.get('/users',isLoggedin,isAdmin,alluser);

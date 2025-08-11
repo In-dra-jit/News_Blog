@@ -4,6 +4,7 @@ const jwt=require('jsonwebtoken');
 const dotenv=require('dotenv').config();
 const CategoryModel=require('../models/category.model.js');
 const NewsModel=require('../models/new.model.js');
+const SettingModel=require('../models/settings.model.js');
 //Login
 const loginPage=(req,res)=>{ 
 
@@ -73,6 +74,29 @@ const settings=(req,res)=>{
 
     res.render('admin/setting',{role:req.role});
 }
+
+const saveSetting = async (req, res) => {
+    try {
+        const { website_title, website_footer } = req.body;
+        const website_logo = req.file ? req.file.filename : null;
+
+        const updateData = {
+            website_title,
+            website_footer
+        };
+
+        if (website_logo) {
+            updateData.website_logo = website_logo;
+        }
+
+        await SettingModel.updateOne({}, updateData, { upsert: true });
+        res.redirect('/admin/settings');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
 //User
 const alluser=async(req,res)=>{ 
     const users=await UserModel.find();
@@ -148,7 +172,8 @@ module.exports={
     addUser,
     updateUserPage,
     updateUser,
-    deleteUser
+    deleteUser,
+    saveSetting
 }
 
 
