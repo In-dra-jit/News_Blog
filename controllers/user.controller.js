@@ -70,9 +70,9 @@ const dashboard = async (req, res) => {
     }
 }
 
-const settings=(req,res)=>{
-
-    res.render('admin/setting',{role:req.role});
+const settings=async(req,res)=>{
+    const setting=await SettingModel.findOne();
+    res.render('admin/setting',{role:req.role,setting});
 }
 
 const saveSetting = async (req, res) => {

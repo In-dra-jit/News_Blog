@@ -12,16 +12,27 @@
                       <form action="/admin/save-settings" method="POST" enctype="multipart/form-data">
                           <div class="mb-3">
                               <label for="article_title" class="form-label">Website Title</label>
+                              <% if(setting.website_title && setting.website_title.trim()!==""){ %>
+                              <input type="text" name="website_title" class="form-control" value="<%=setting.website_title%>" autocomplete="off" required="">
+                              <% }else{ %>
                               <input type="text" name="website_title" class="form-control" autocomplete="off" required="">
-                          </div>
+                              <% } %>
+                            </div>
                           <div class="mb-3">
                               <label for="website_logo" class="form-label">Upload Logo</label>
+                             <br>
+                             <% if(setting.website_logo && setting.website_logo.trim()!==""){ %>
+                              <img src="/uploads/<%=setting.website_logo%>" class="article-image mb-3 w-25 border-3 border-primary">
+                              <% } %>
                               <input type="file" name="website_logo" class="form-control" >
                           </div>
                           <div class="mb-3">
                               <label for="footer_description" class="form-label">Footer Description</label>
+                              <% if(setting.website_footer && setting.website_footer.trim()!==""){ %>
+                              <input type="text" name="website_footer" class="form-control" value="<%=setting.website_footer%>" autocomplete="off" required="">
+                              <% }else{ %>
                               <input type="text" name="website_footer" class="form-control" autocomplete="off" required="">
-                          </div>
+                              <% } %>                          </div>
                           
                           <input type="submit" name="submit" class="btn btn-primary" value="Save" required="">
                       </form>
