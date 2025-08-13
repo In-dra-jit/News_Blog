@@ -45,4 +45,25 @@ router.get('/delete-article/:id',isLoggedin,deleteNews);
 router.get('/comments',isLoggedin,allComments);
 
 
+//404 Middleware
+router.use(isLoggedin,(req, res,next ) => {
+        res.status(404).render('admin/404',{
+            message:"Page Not Found",
+            role:req.role
+        })
+    })
+
+
+
+
+    
+//500 Middleware
+router.use(isLoggedin,(err,req, res,next ) => {
+        res.status(500).render('admin/500',{
+            message:err.message || 'Internal Server Error',
+            role:req.role
+        })
+    })
+
+
 module.exports = router
