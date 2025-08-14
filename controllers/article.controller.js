@@ -66,8 +66,9 @@ const updateNewsPage=async(req,res)=>{
         const catagories=await CategoryModel.find({});    
         res.render('admin/articles/update',{role:req.role,article,catagories});
     } catch (error) {
-        console.log(error);
-        res.status(500).send('Internal Server Error');
+        // console.log(error);
+        // res.status(500).send('Internal Server Error');
+        next(error);
     }
 }
 const updateNews=async(req,res)=>{
@@ -92,13 +93,14 @@ const updateNews=async(req,res)=>{
         await article.save();
         res.redirect('/admin/articles');
     } catch (error) {
-        console.log(error);
-        res.status(500).send('Internal Server Error');
+        // console.log(error);
+        // res.status(500).send('Internal Server Error');
+        next(error);
     }
 
 
 }
-const deleteNews = async (req, res,next) => {
+const deleteNews = async (req, res, next) => {
     const id = req.params.id;
     try {
         const article = await NewsModel.findById(id);
@@ -107,33 +109,29 @@ const deleteNews = async (req, res,next) => {
         }
 
         // Author permission check
-        if (req.role === 'author') {
-            if (article.author._id.toString() !== req.id) {
-                return res.status(400).send("Access Denied");
-            }
+        if (req.role === 'author' && article.author._id.toString() !== req.id) {
+            return res.status(403).json({ success: false, message: "Access Denied" });
         }
 
-        // Delete associated image file
+        // Delete associated image file if it exists
         if (article.image) {
             const imagePath = path.join(__dirname, '..', article.image);
-                        //const imagePath = path.join(__dirname, '..', 'public', 'uploads', article.image);
-
             if (fs.existsSync(imagePath)) {
                 fs.unlinkSync(imagePath);
             }
         }
 
-        await NewsModel.findByIdAndDelete(id);
-
+        await article.remove();
         res.json({ success: true, message: "Article deleted successfully" });
 
     } catch (error) {
-        // console.error("Error deleting article:", error);
-        // res.status(500).json({ success: false, message: 'Internal Server Error' });
         next(error);
     }
 };
-module.exports={
+
+
+
+module.exports = {
     allNews,
     addNewsPage,
     addNews,

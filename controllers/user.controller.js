@@ -65,8 +65,9 @@ const dashboard = async (req, res) => {
             categoriesCount
         });
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
+        // console.error(error);
+        // res.status(500).send('Internal Server Error');
+        next(error);
     }
 }
 
@@ -92,8 +93,9 @@ const saveSetting = async (req, res) => {
         await SettingModel.updateOne({}, updateData, { upsert: true });
         res.redirect('/admin/settings');
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
+        // console.error(error);
+        // res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
 
@@ -120,8 +122,9 @@ const updateUserPage=async(req,res)=>{
         res.render('admin/users/update',{user,role:req.role});
     } catch (error) {
         console.log(error);
-        res.status(500).send('Internal Server Error');
-        res.redirect('/admin/users');
+        // res.status(500).send('Internal Server Error');
+        // res.redirect('/admin/users');
+        next(error);
         
     }
  }
@@ -142,8 +145,10 @@ const updateUser=async(req,res)=>{
         await user.save();
         res.redirect('/admin/users');
     } catch (error) {
-        console.log(error);
-        res.status(500).send('Internal Server Error');
+        // console.log(error);
+        // res.status(500).send('Internal Server Error');
+        // res.redirect('/admin/users');
+        next(error);
         
     }
  }
@@ -153,9 +158,12 @@ const deleteUser = async (req, res) => {
     await UserModel.findByIdAndDelete(id);
     res.json({ success: true, message: "User deleted successfully" }); // ✅ Return JSON
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Internal Server Error' }); // ✅ Error as JSON
-  }
+    // console.error(error);
+    // res.status(500).json({ success: false, message: 'Internal Server Error' }); // ✅ Error as JSON
+    next(error);
+  
+}
+
 };
 
 

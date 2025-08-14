@@ -15,8 +15,9 @@ const addCategory=async(req,res)=>{
         const category = await CategoryModel.create({ name, description });
         res.redirect('/admin/category');
     } catch (error) {
-        console.error("Error adding category:", error);
-        res.status(500).send('Internal Server Error');
+        // console.error("Error adding category:", error);
+        // res.status(500).send('Internal Server Error');
+        next(error);
     }
 }
 const updateCategoryPage=async(req,res)=>{
@@ -27,9 +28,11 @@ const updateCategoryPage=async(req,res)=>{
         return res.status(400).send("No category Found");
     }
     res.render('admin/categories/update',{category,role:req.role});
-    }catch(error){
-        res.status.send(error);
-    }
+     }catch(error){
+    //     res.status.send(error);
+    // 
+    next(error);
+     }
     
 }
 const updateCategory=async(req,res)=>{
@@ -49,7 +52,8 @@ try{
     res.redirect('/admin/category');
 
 }catch(error){
-    res.status.send(error);   
+    // res.status.send(error);   
+    next(error);
 }
 
 
@@ -63,8 +67,9 @@ const deleteCategory = async (req, res) => {
     }
     res.json({ success: true,message: "Category deleted successfully" });
   } catch (error) {
-    console.error("Error deleting category:", error);
-    res.status(500).json({ success: false, message: 'Internal Server Error' });
+    // console.error("Error deleting category:", error);
+    // res.status(500).json({ success: false, message: 'Internal Server Error' });
+    next(error);;
   }
 };
 
