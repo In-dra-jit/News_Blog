@@ -1,5 +1,5 @@
 const CategoryModel=require('../models/category.model.js');
-
+const createError=require('../utils/error-meesage.js');
 const allCategory=async(req,res)=>{
     const categories=await CategoryModel.find();
     res.render('admin/categories',{categories,role:req.role});
@@ -8,7 +8,7 @@ const addCategoryPage=async(req,res)=>{
 
     res.render('admin/categories/create',{role:req.role});
 }
-const addCategory=async(req,res)=>{
+const addCategory=async(req,res,next)=>{
 
     try {
         const { name, description } = req.body;
@@ -25,7 +25,9 @@ const updateCategoryPage=async(req,res)=>{
         const id=req.params.id;
     const category=await CategoryModel.findById(id);
     if(!category){
-        return res.status(400).send("No category Found");
+        // return res.status(400).send("No category Found");
+        return next(createError(400,"No Catagory Found"));
+        
     }
     res.render('admin/categories/update',{category,role:req.role});
      }catch(error){
@@ -35,7 +37,7 @@ const updateCategoryPage=async(req,res)=>{
      }
     
 }
-const updateCategory=async(req,res)=>{
+const updateCategory=async(req,res,next)=>{
 const id=req.params.id;
 try{
     const {name,description}=req.body;
@@ -58,12 +60,14 @@ try{
 
 
 }
-const deleteCategory = async (req, res) => {
+const deleteCategory = async (req, res,next) => {
   try {
     const id = req.params.id;
     const category = await CategoryModel.findByIdAndDelete(id);
     if (!category) {
-      return res.status(404).send('Category not found');
+    //   return res.status(404).send('Category not found');
+    return next(createError(400,"No Catagory Found"));
+
     }
     res.json({ success: true,message: "Category deleted successfully" });
   } catch (error) {

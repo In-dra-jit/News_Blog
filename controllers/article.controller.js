@@ -3,6 +3,7 @@ const CategoryModel=require('../models/category.model.js');
 const UserModel=require('../models/user.model.js');
 const fs=require('fs');
 const path=require('path');
+const createError=require('../utils/error-meesage.js');
 
 const allNews=async(req,res,next)=>{
     try{
@@ -28,7 +29,7 @@ const addNewsPage=async(req,res)=>{
     const catagories=await CategoryModel.find({});
     res.render('admin/articles/create',{role:req.role,catagories});
 }
-const addNews=async(req,res)=>{
+const addNews=async(req,res,next)=>{
     try{
         const news=new NewsModel({...req.body,author:req.id});
         if(req.file){
@@ -46,14 +47,22 @@ const addNews=async(req,res)=>{
 }
 
 
-const updateNewsPage=async(req,res)=>{
+const updateNewsPage=async(req,res,next)=>{
     const id=req.params.id;
     try {
         const article=await NewsModel.findById(id)
                                     .populate('category','name')
                                     .populate('author','fullname');
          if(!article){
-            return res.status(400).send("No article Found");
+           // return res.status(400).send("No article Found");
+           
+        //    const error = new Error('Article not found');
+        //     error.status = 404;
+        //     return next(error);
+
+
+            return next(createError(400,"No article Found"));
+        
         }
 
         if(req.role==='author') {
@@ -71,7 +80,7 @@ const updateNewsPage=async(req,res)=>{
         next(error);
     }
 }
-const updateNews=async(req,res)=>{
+const updateNews=async(req,res,next)=>{
     const id=req.params.id;
     try {
         const article=await NewsModel.findByIdAndUpdate(id,req.body,{new:true,runValidators:true});
@@ -105,8 +114,14 @@ const deleteNews = async (req, res, next) => {
     try {
         const article = await NewsModel.findById(id);
         if (!article) {
-            return res.status(404).json({ success: false, message: "Article not found" });
+            // return res.status(404).json({ success: false, message: "Article not found" });
+                        return next(createError(400,"No article Found"));
+
+            
         }
+
+
+
 
         // Author permission check
         if (req.role === 'author' && article.author._id.toString() !== req.id) {

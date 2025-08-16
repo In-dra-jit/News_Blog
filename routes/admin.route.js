@@ -59,7 +59,10 @@ router.use(isLoggedin,(req, res,next ) => {
     
 //500 Middleware
 router.use(isLoggedin,(err,req, res,next ) => {
-        res.status(500).render('admin/500',{
+        console.error(err.stack);
+        const status=err.status || 500;
+        const view=status===400?'admin/400':'admin/500';
+        res.status(status).render(view,{
             message:err.message || 'Internal Server Error',
             role:req.role
         })
