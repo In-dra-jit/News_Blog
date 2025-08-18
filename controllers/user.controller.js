@@ -5,21 +5,35 @@ const dotenv=require('dotenv').config();
 const CategoryModel=require('../models/category.model.js');
 const NewsModel=require('../models/new.model.js');
 const SettingModel=require('../models/settings.model.js');
+const { validationResult } = require('express-validator');
+const createError=require('../utils/error-meesage.js');
 //Login
 const loginPage=(req,res)=>{ 
 
     res.render('admin/login',{
-        layout:false
+        layout:false,
+        errors:0
     });
 }
 
 
-const adminLogin = async (req, res) => {
+const adminLogin = async (req, res,next) => {
+   const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        //return res.status(400).json({ error: errors.array() });
+        return  res.render('admin/login',{
+        layout:false,
+        errors:errors.array()
+    });
+    }
+
+
     const { username, password } = req.body;
     const user = await UserModel.findOne({ username });
 
     if (!user) {
-        return res.render('admin', { error: 'User not found' });
+       return next(createError(400,"User not found"));
+        // return res.render('admin', { error: 'User not found' });
     }
 
     // // Check if role is admin
@@ -31,8 +45,10 @@ const adminLogin = async (req, res) => {
 
     const isMatch = bcrypt.compareSync(password, user.password);
     if (!isMatch) {
-        return res.render('admin', { error: 'Invalid password' });
+        //return res.render('admin', { error: 'Invalid password' });
+        return next(createError(400,"Invalid password"));
     }
+
 
     const jwtdata = { id: user._id, fullname: user.fullname, role: user.role };
     const token = jwt.sign(jwtdata, process.env.JWT_SECRET, { expiresIn: '1d' });
@@ -112,7 +128,7 @@ const addUser=async(req,res)=>{
     await UserModel.create(req.body);
     res.redirect('/admin/users');
  }
-const updateUserPage=async(req,res)=>{
+const updateUserPage=async(req,res,next)=>{
     const id=req.params.id;
     try {
         const user=await UserModel.findById(id);
@@ -134,7 +150,8 @@ const updateUser=async(req,res)=>{
     try {
         const user=await UserModel.findById(id);
         if(!user){
-            res.status(404).send('User not found');
+           // res.status(404).send('User not found');
+            return next(createError(404,"User not found"));
         }
         user.fullname=fullname|| user.fullname;
         if(password){

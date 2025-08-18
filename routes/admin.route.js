@@ -8,9 +8,10 @@ const{allComments}=require('../controllers/comment.controller.js');
 const isLoggedin=require('../middleware/isLoggedin.js');
 const isAdmin=require('../middleware/isadmin.js');
 const upload=require('../middleware/multer.js');
+const isValidation=require('../middleware/Validation .js');
 //Login
 router.get('/',loginPage);
-router.post('/index',adminLogin);
+router.post('/index',isValidation.LoginForm,adminLogin);
 router.get('/logout',isLoggedin,logout);
 router.get('/dashboard',isLoggedin,dashboard);
 router.get('/settings',isLoggedin,isAdmin,settings);
@@ -63,7 +64,7 @@ router.use(isLoggedin,(err,req, res,next ) => {
         const status=err.status || 500;
         const view=status===400?'admin/400':'admin/500';
         res.status(status).render(view,{
-            message:err.message || 'Internal Server Error',
+            message:err.message || 'Something Went wrong , please try again later',
             role:req.role
         })
     })

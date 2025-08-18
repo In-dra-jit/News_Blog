@@ -1,0 +1,5 @@
+<% if(errors.length > 0){ %>
+                            <% errors.forEach(error => { %>
+                              <p class="alert alert-danger mt-3"><%= error.msg %></p>
+                            <% }) %>
+                          <% } %>
