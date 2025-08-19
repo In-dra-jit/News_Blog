@@ -20,16 +20,16 @@ router.post('/save-settings',isLoggedin,isAdmin,upload.single('website_logo'),sa
 //User
 router.get('/users',isLoggedin,isAdmin,alluser);
 router.get('/add-user',isLoggedin,isAdmin,addUserPage);
-router.post('/add-user',isLoggedin,isAdmin,addUser);
+router.post('/add-user',isLoggedin,isAdmin,isValidation.UserForm,addUser);
 router.get('/update-user/:id',isLoggedin,isAdmin,updateUserPage);
-router.post('/update-user/:id',isLoggedin,isAdmin,updateUser);
+router.post('/update-user/:id',isLoggedin,isAdmin,isValidation.UserUpdateForm,updateUser);
 router.delete('/delete-user/:id',isLoggedin,isAdmin,deleteUser);
 
 
 //Category 
 router.get('/category',isLoggedin,isAdmin,allCategory);
 router.get('/add-category',isLoggedin,isAdmin,addCategoryPage);
-router.post('/add-category',isLoggedin,isAdmin,addCategory);
+router.post('/add-category',isLoggedin,isAdmin,isValidation.CategoryForm,addCategory);
 router.get('/update-category/:id',isLoggedin,isAdmin,updateCategoryPage);
 router.post('/update-category/:id',isLoggedin,isAdmin,updateCategory);
 router.get('/delete-category/:id',isLoggedin,isAdmin,deleteCategory);
@@ -37,7 +37,7 @@ router.get('/delete-category/:id',isLoggedin,isAdmin,deleteCategory);
 //Article
 router.get('/articles',isLoggedin,allNews);
 router.get('/add-article',isLoggedin,addNewsPage);
-router.post('/add-article',isLoggedin,upload.single('image'),addNews);
+router.post('/add-article',isLoggedin,upload.single('image'),isValidation.ArticleForm,addNews);
 router.get('/update-article/:id',isLoggedin,updateNewsPage);
 router.post('/update-article/:id',isLoggedin,upload.single('image'),updateNews);
 router.get('/delete-article/:id',isLoggedin,deleteNews);

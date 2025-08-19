@@ -121,9 +121,17 @@ const alluser=async(req,res)=>{
     res.render('admin/users',{users,role:req.role});
 }
 const addUserPage=(req,res)=>{ 
-    res.render('admin/users/create',{role:req.role});
+    res.render('admin/users/create',{role:req.role,errors:0});
 }
 const addUser=async(req,res)=>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        //return res.status(400).json({ error: errors.array() });
+        return  res.render('admin/users/create',{
+            role:req.role,
+        errors:errors.array()
+    });
+    }
 
     await UserModel.create(req.body);
     res.redirect('/admin/users');
@@ -135,7 +143,7 @@ const updateUserPage=async(req,res,next)=>{
         if(!user){
             res.status(404).send('User not found');
         }
-        res.render('admin/users/update',{user,role:req.role});
+        res.render('admin/users/update',{user,role:req.role,errors:0});
     } catch (error) {
         console.log(error);
         // res.status(500).send('Internal Server Error');
@@ -146,6 +154,16 @@ const updateUserPage=async(req,res,next)=>{
  }
 const updateUser=async(req,res)=>{
     const id=req.params.id;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        //return res.status(400).json({ error: errors.array() });
+        return  res.render('admin/users/update',{
+            user:req.body,
+            role:req.role,
+        errors:errors.array()
+    });
+    }
+
     const{fullname,password,role}=req.body;
     try {
         const user=await UserModel.findById(id);
