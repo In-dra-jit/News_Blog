@@ -4,6 +4,8 @@ const UserModel=require('../models/user.model.js');
 const fs=require('fs');
 const path=require('path');
 const createError=require('../utils/error-meesage.js');
+const { validationResult } = require('express-validator');
+
 
 const allNews=async(req,res,next)=>{
     try{
@@ -27,9 +29,17 @@ const allNews=async(req,res,next)=>{
 }
 const addNewsPage=async(req,res)=>{
     const catagories=await CategoryModel.find({});
-    res.render('admin/articles/create',{role:req.role,catagories});
+    res.render('admin/articles/create',{role:req.role,catagories,errors:0});
 }
 const addNews=async(req,res,next)=>{
+   const errors = validationResult(req);
+       if (!errors.isEmpty()) {
+           //return res.status(400).json({ error: errors.array() });
+           return  res.render('admin/articles/create',{
+               role:req.role,
+           errors:errors.array()
+       });
+       }
     try{
         const news=new NewsModel({...req.body,author:req.id});
         if(req.file){

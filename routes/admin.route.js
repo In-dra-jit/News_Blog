@@ -31,7 +31,7 @@ router.get('/category',isLoggedin,isAdmin,allCategory);
 router.get('/add-category',isLoggedin,isAdmin,addCategoryPage);
 router.post('/add-category',isLoggedin,isAdmin,isValidation.CategoryForm,addCategory);
 router.get('/update-category/:id',isLoggedin,isAdmin,updateCategoryPage);
-router.post('/update-category/:id',isLoggedin,isAdmin,updateCategory);
+router.post('/update-category/:id',isLoggedin,isAdmin,isValidation.CategoryForm,updateCategory);
 router.get('/delete-category/:id',isLoggedin,isAdmin,deleteCategory);
 
 //Article
@@ -39,7 +39,7 @@ router.get('/articles',isLoggedin,allNews);
 router.get('/add-article',isLoggedin,addNewsPage);
 router.post('/add-article',isLoggedin,upload.single('image'),isValidation.ArticleForm,addNews);
 router.get('/update-article/:id',isLoggedin,updateNewsPage);
-router.post('/update-article/:id',isLoggedin,upload.single('image'),updateNews);
+router.post('/update-article/:id',isLoggedin,upload.single('image'),isValidation.ArticleForm,updateNews);
 router.get('/delete-article/:id',isLoggedin,deleteNews);
 
 //show comments

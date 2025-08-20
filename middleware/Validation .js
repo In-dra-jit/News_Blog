@@ -60,18 +60,18 @@ const CategoryForm=[
     body("name")
     .notEmpty().withMessage("Name is required")
     .trim()
-    .matches(/^[a-zA-Z]{3,10}$/).withMessage("Name must be alphabet and between 3 and 10 characters long")
+   // .matches(/^[a-zA-Z]{3,10}$/).withMessage("Name must be alphabet and between 3 and 10 characters long")
     .isLength({min:3,max:10}).withMessage("Name must be at least 3 characters long"),
 
     body("description")
-    .isLength({max:100}).withMessage("Description must be at most 100 characters long")
+    .isLength({ min:3,max:100}).withMessage("Description must be at most 100 characters long")
 ]
 
 const ArticleForm=[
     body("title")
     .notEmpty().withMessage("Title is required")
     .trim()
-    .matches(/^[a-zA-Z]{3,20}$/).withMessage("Title must be alphabet and between 3 and 20 characters long")
+    //.matches(/^[a-zA-Z]{3,20}$/).withMessage("Title must be alphabet and between 3 and 20 characters long")
     .isLength({min:3,max:20}).withMessage("Title must be at least 3 characters long"),
     
     body("content")
