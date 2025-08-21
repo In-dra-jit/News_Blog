@@ -4,7 +4,7 @@ const UserModel=require('../models/user.model.js');
 const fs=require('fs');
 const path=require('path');
 const createError=require('../utils/error-meesage.js');
-const { validationResult } = require('express-validator');
+//const { validationResult } = require('express-validator');
 
 
 const allNews=async(req,res,next)=>{
@@ -32,14 +32,16 @@ const addNewsPage=async(req,res)=>{
     res.render('admin/articles/create',{role:req.role,catagories,errors:0});
 }
 const addNews=async(req,res,next)=>{
-   const errors = validationResult(req);
-       if (!errors.isEmpty()) {
-           //return res.status(400).json({ error: errors.array() });
-           return  res.render('admin/articles/create',{
-               role:req.role,
-           errors:errors.array()
-       });
-       }
+//    const errors = validationResult(req);
+//        if (!errors.isEmpty()) {
+//          const catagories=await CategoryModel.find({});
+//            //return res.status(400).json({ error: errors.array() });
+//            return  res.render('admin/articles/create',{
+//                role:req.role,
+//            errors:errors.array(),
+//            catagories
+//        });
+//        }
     try{
         const news=new NewsModel({...req.body,author:req.id});
         if(req.file){
@@ -92,6 +94,17 @@ const updateNewsPage=async(req,res,next)=>{
 }
 const updateNews=async(req,res,next)=>{
     const id=req.params.id;
+    // const errors = validationResult(req);
+    //    if (!errors.isEmpty()) {
+    //     const catagories=await CategoryModel.find({});
+    //        //return res.status(400).json({ error: errors.array() });
+    //        return  res.render('admin/articles/update',{
+    //         article:req.body,
+    //         catagories,
+    //         role:req.role,
+    //        errors:errors.array()
+    //    });
+    //    }
     try {
         const article=await NewsModel.findByIdAndUpdate(id,req.body,{new:true,runValidators:true});
         if(!article){

@@ -37,9 +37,9 @@ router.get('/delete-category/:id',isLoggedin,isAdmin,deleteCategory);
 //Article
 router.get('/articles',isLoggedin,allNews);
 router.get('/add-article',isLoggedin,addNewsPage);
-router.post('/add-article',isLoggedin,upload.single('image'),isValidation.ArticleForm,addNews);
+router.post('/add-article',isLoggedin,upload.single('image'),addNews);
 router.get('/update-article/:id',isLoggedin,updateNewsPage);
-router.post('/update-article/:id',isLoggedin,upload.single('image'),isValidation.ArticleForm,updateNews);
+router.post('/update-article/:id',isLoggedin,upload.single('image'),updateNews);
 router.get('/delete-article/:id',isLoggedin,deleteNews);
 
 //show comments

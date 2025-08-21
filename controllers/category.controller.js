@@ -52,8 +52,9 @@ const updateCategory=async(req,res,next)=>{
 const id=req.params.id;
 const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            //return res.status(400).json({ error: errors.array() });
+            const category=await CategoryModel.findById(id);
             return  res.render('admin/categories/update',{
+               category,
                 role:req.role,
             errors:errors.array()
         });
