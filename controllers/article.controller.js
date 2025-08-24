@@ -137,18 +137,12 @@ const deleteNews = async (req, res, next) => {
     try {
         const article = await NewsModel.findById(id);
         if (!article) {
-            // return res.status(404).json({ success: false, message: "Article not found" });
-                        return next(createError(400,"No article Found"));
-
-            
+            return next(createError(404, "Article not found"));
         }
-
-
-
 
         // Author permission check
         if (req.role === 'author' && article.author._id.toString() !== req.id) {
-            return res.status(403).json({ success: false, message: "Access Denied" });
+            return next(createError(403, "Access Denied"));
         }
 
         // Delete associated image file if it exists
@@ -159,7 +153,7 @@ const deleteNews = async (req, res, next) => {
             }
         }
 
-        await article.remove();
+        await NewsModel.findByIdAndDelete(id);
         res.json({ success: true, message: "Article deleted successfully" });
 
     } catch (error) {

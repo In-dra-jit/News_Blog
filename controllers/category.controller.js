@@ -1,4 +1,5 @@
 const CategoryModel=require('../models/category.model.js');
+const NewsModel=require('../models/new.model.js');
 const createError=require('../utils/error-meesage.js');
 const { validationResult } = require('express-validator');
 
@@ -80,23 +81,27 @@ try{
 
 
 }
-const deleteCategory = async (req, res,next) => {
+const deleteCategory = async (req, res, next) => {
+  const id = req.params.id;
   try {
-    const id = req.params.id;
-                                                                                           
-    const category = await CategoryModel.findByIdAndDelete(id);
+    const category = await CategoryModel.findById(id);
     if (!category) {
-    //   return res.status(404).send('Category not found');
-    return next(createError(400,"No Catagory Found"));
-
+      return next(createError('Category not found', 404));
     }
-    res.json({ success: true,message: "Category deleted successfully" });
+
+    const article = await NewsModel.findOne({ category: id });
+    if (article) {
+      return res.status(400).json({ success: false, message: 'Category is associated with an article' });
+    }
+
+    await category.deleteOne();
+    res.json({ success: true });
   } catch (error) {
-    // console.error("Error deleting category:", error);
-    // res.status(500).json({ success: false, message: 'Internal Server Error' });
-    next(error);;
+    // res.status(400).send(error);
+    next(error)
   }
 };
+
 
 
 module.exports={

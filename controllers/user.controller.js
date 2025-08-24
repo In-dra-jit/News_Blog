@@ -190,7 +190,15 @@ const updateUser=async(req,res)=>{
 const deleteUser = async (req, res) => {
   const id = req.params.id;
   try {
-    await UserModel.findByIdAndDelete(id);
+    const user = await UserModel.findById(id);
+    if (!user) {
+      return next(createError(404, "User not found"));
+    }
+    const article = await NewsModel.findOne({ author: id });
+        if (article) {
+          return res.status(400).json({ success: false, message: 'User is associated with an article' });
+        }
+    await user.deleteOne();
     res.json({ success: true, message: "User deleted successfully" }); // ✅ Return JSON
   } catch (error) {
     // console.error(error);
