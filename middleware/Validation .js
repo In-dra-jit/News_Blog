@@ -77,7 +77,7 @@ const ArticleForm=[
     body("content")
     .notEmpty().withMessage("Content is required")
     .trim()
-    .isLength({ max:100}).withMessage("Content must be at least 100 characters long"),
+    .isLength({ min:3, max:100}).withMessage("Content must be at least 100 characters long"),
 
     body('category')
     .notEmpty().withMessage("Category is required"),

@@ -95,7 +95,7 @@ const deleteCategory = async (req, res, next) => {
     }
 
     await category.deleteOne();
-    res.json({ success: true });
+    res.json({ success: true ,message: "Category deleted successfully"});
   } catch (error) {
     // res.status(400).send(error);
     next(error)
