@@ -62,16 +62,13 @@ const errors = validationResult(req);
         }
 try{
     const {name,description}=req.body;
-    const category=await CategoryModel.findByIdAndUpdate(id,{
-        name,
-        description
-    },{
-        new:true,
-        runValidators:true
-    });
+    const category=await CategoryModel.findById(id);
     if(!category){
         return res.status(400).send("No category Found");
     }
+    category.name=name;
+    category.description=description;
+    await category.save();
     res.redirect('/admin/category');
 
 }catch(error){

@@ -7,6 +7,7 @@ const NewsModel=require('../models/new.model.js');
 const SettingModel=require('../models/settings.model.js');
 const { validationResult } = require('express-validator');
 const createError=require('../utils/error-meesage.js');
+const fs=require('fs');
 //Login
 const loginPage=(req,res)=>{ 
 
@@ -94,19 +95,29 @@ const settings=async(req,res)=>{
 
 const saveSetting = async (req, res) => {
     try {
-        const { website_title, website_footer } = req.body;
-        const website_logo = req.file ? req.file.filename : null;
+        const setting = await SettingModel.findOne();
 
-        const updateData = {
-            website_title,
-            website_footer
-        };
-
-        if (website_logo) {
-            updateData.website_logo = website_logo;
+        if (!setting) {
+            return next(createError(404, 'Setting not found'));
         }
 
-        await SettingModel.updateOne({}, updateData, { upsert: true });
+        const { website_title, website_footer } = req.body;
+        const website_logo = req.file ? req.file.filename : setting.website_logo;
+
+        setting.website_title = website_title;
+        setting.website_footer = website_footer;
+        //setting.website_logo = website_logo;
+        if(website_logo){
+            if(setting.website_logo){
+                const imagePath = `uploads/${setting.website_logo}`;
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
+                }
+            }
+            setting.website_logo = website_logo;
+        }
+
+        await setting.save();
         res.redirect('/admin/settings');
     } catch (error) {
         // console.error(error);
