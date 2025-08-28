@@ -8,7 +8,13 @@ const UserModel=require('../models/user.model.js');
 
 
 const index=async(req,res)=>{
-    res.render('index');
+    const news=await NewsModel.find({})
+    .populate('category',{'name':1,'slug':1})
+    .populate('author','fullname')
+    .sort({createdAt:-1})
+    .limit(5);
+    //res.json({news});
+    res.render('index',{news});
 }
 const articleBycategory=async(req,res)=>{
     res.render('category');
