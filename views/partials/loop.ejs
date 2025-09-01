@@ -6,15 +6,15 @@
                     </div>
                     <div class="col-md-8">
                         <div class="inner-content clearfix">
-                            <h3><a href='./single/<%= article._id %>'><%= article.title %></a></h3>
+                            <h3><a href='/single/<%= article._id %>'><%= article.title.id %></a></h3>
                             <div class="article-information">
                             <span>
                                 <i class="fa fa-tags" aria-hidden="true"></i>
-                                <a href='/category/<%=article.slug %>'><%= article.category.name %></a>
+                                <a href='/category/<%=article.category.slug %>'><%= article.category.name %></a>
                             </span>
                             <span>
                                 <i class="fa fa-user" aria-hidden="true"></i>
-                                <a href='/author/<%= article._id %>'><%= article.author.fullname %></a>
+                                <a href='/author/<%= article.author._id %>'><%= article.author.fullname %></a>
                             </span>
                             <span>
                                 <i class="fa fa-calendar" aria-hidden="true"></i>
@@ -29,7 +29,7 @@
                                     <%= text.replace(/<[^>]*>/g, '') %>
                                 <% } %>
                             </p>
-                            <a class='read-more pull-right' href='./single/<%= article._id %>'>read more</a>
+                            <a class='read-more pull-right' href='/single/<%= article._id %>'>read more</a>
                         </div>
                     </div>
                     </div>

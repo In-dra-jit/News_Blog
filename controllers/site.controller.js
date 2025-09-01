@@ -3,7 +3,7 @@ const CategoryModel=require('../models/category.model.js');
 const NewsModel=require('../models/new.model.js');
 const CommentModel=require('../models/comments.model.js');
 const UserModel=require('../models/user.model.js');
-
+const mongoose = require('mongoose');
 
 
 
@@ -37,22 +37,33 @@ const articleBycategory=async(req,res)=>{
     const categoriesInUse=await NewsModel.distinct('category');
     const categories=await CategoryModel.find({'_id':{$in:categoriesInUse}});
 
-    res.render('category',{news,categories});
+    res.render('category',{news,categories,category});
 }
-const singleArticle=async(req,res)=>{
-   const news=await NewsModel.find({})
-    .populate('category',{'name':1,'slug':1})
-    .populate('author','fullname')
-    .sort({createdAt:-1})
-    .limit(5);
+const singleArticle = async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).send("Invalid article ID");
+    }
+  const Singlenews = await NewsModel.findById(req.params.id)
+    .populate('category', { name: 1, slug: 1 })
+    .populate('author', 'fullname');
 
-    const categoriesInUse=await NewsModel.distinct('category');
-    const categories=await CategoryModel.find({'_id':{$in:categoriesInUse}});
+  if (!Singlenews) {
+    return res.status(404).send("Article not found");
+  }
 
-    res.render('single',{news,categories});
-}
+  const categoriesInUse = await NewsModel.distinct('category');
+  const categories = await CategoryModel.find({ _id: { $in: categoriesInUse } });
+
+  res.render('single', { Singlenews, categories });
+};
 const search=async(req,res)=>{
-    const singleNews=await NewsModel.findById(req.params.id)   
+  const serachQuery=req.query.search;  
+  const news=await NewsModel.find({
+    $or: [
+      { title: { $regex: serachQuery, $options: 'i' } },
+      { content: { $regex: serachQuery, $options: 'i' } },
+    ],
+  })   
     .populate('category',{'name':1,'slug':1})
     .populate('author','fullname')
     .sort({createdAt:-1})
@@ -61,9 +72,13 @@ const search=async(req,res)=>{
     const categoriesInUse=await NewsModel.distinct('category');
     const categories=await CategoryModel.find({'_id':{$in:categoriesInUse}});
 
-    res.render('search',{singleNews,categories});
+    res.render('search',{news,categories,serachQuery});
 }
 const author=async(req,res)=>{
+  const author=await UserModel.findOne({_id:req.params.name});
+  if(!author){
+    return res.status(400).send("No author Found");
+  }
     const news=await NewsModel.find({author:req.params.name})
     .populate('category',{'name':1,'slug':1})
     .populate('author','fullname')
@@ -73,7 +88,7 @@ const author=async(req,res)=>{
     const categoriesInUse=await NewsModel.distinct('category');
     const categories=await CategoryModel.find({'_id':{$in:categoriesInUse}});
 
-    res.render('author',{news,categories});
+    res.render('author',{news,categories,author});
 }
 const addcomment=async(req,res)=>{
     
