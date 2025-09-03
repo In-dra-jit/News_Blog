@@ -9,7 +9,8 @@ author,
 addcomment
 
 }=require('../controllers/site.controller.js');
-
+const loadCommonData=require('../middleware/loadCommonData.js');
+ router.use(loadCommonData);
 router.get('/',index);
 router.get('/category/:name',articleBycategory);
 router.get('/single/:id',singleArticle);

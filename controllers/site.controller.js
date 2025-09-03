@@ -1,11 +1,11 @@
-const moongose = require('mongoose');
+
 const CategoryModel=require('../models/category.model.js');
 const NewsModel=require('../models/new.model.js');
 const CommentModel=require('../models/comments.model.js');
 const UserModel=require('../models/user.model.js');
+const settingModel=require('../models/settings.model.js');
+const moongose = require('mongoose');
 const mongoose = require('mongoose');
-
-
 
 const index=async(req,res)=>{
     const news=await NewsModel.find({})
@@ -14,13 +14,19 @@ const index=async(req,res)=>{
     .sort({createdAt:-1})
     .limit(5);
 
+    const settings=await settingModel.findOne();
+
+    const latestnews=await NewsModel.find({})
+    .populate('category',{'name':1,'slug':1})
+    .populate('author','fullname')
+    .sort({createdAt:-1}).limit(5);
     const categoriesInUse=await NewsModel.distinct('category');
     const categories=await CategoryModel.find({'_id':{$in:categoriesInUse}});
     
     //res.json({news,categories});
 
     
-    res.render('index',{news,categories});
+    res.render('index',{news,categories,latestnews,settings});
 }
 const articleBycategory=async(req,res)=>{
    const category = await CategoryModel.findOne({ slug: req.params.name });
@@ -40,7 +46,8 @@ const articleBycategory=async(req,res)=>{
     res.render('category',{news,categories,category});
 }
 const singleArticle = async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+
+ if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).send("Invalid article ID");
     }
   const Singlenews = await NewsModel.findById(req.params.id)
