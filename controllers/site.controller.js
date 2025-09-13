@@ -96,11 +96,14 @@ const singleArticle = async (req, res) => {
     return res.status(404).send("Article not found");
   }
 
+  //Get all Comments
+  const comments = await CommentModel.find({ article: req.params.id, status: 'approved' })
+                                      .sort({ createdAt: -1 });
   const categoriesInUse = await NewsModel.distinct('category');
   const categories = await CategoryModel.find({ _id: { $in: categoriesInUse } });
 
   
-  res.render('single', { Singlenews, categories });
+  res.render('single', { Singlenews, categories,comments });
     
 };
 const search=async(req,res)=>{
@@ -175,8 +178,17 @@ const author=async(req,res)=>{
 
     res.render('author',{paginitData,author,category: null});
 }
-const addcomment=async(req,res)=>{
-    
+const addcomment=async(req,res)=>
+{
+  try {
+    const {name,email,content}=req.body;
+    const comment=await CommentModel({name,email,content,article:req.params.id});
+    await comment.save();
+    res.redirect(`/single/${req.params.id}`);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+  
 }
 
 module.exports={

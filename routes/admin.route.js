@@ -4,7 +4,7 @@ const{loginPage,adminLogin,logout,dashboard,settings,saveSetting}=require('../co
 const{alluser,addUserPage,addUser,updateUserPage,updateUser,deleteUser}=require('../controllers/user.controller.js');
 const{allCategory,addCategoryPage,addCategory,updateCategoryPage,updateCategory,deleteCategory}=require('../controllers/category.controller.js');
 const{allNews,addNewsPage,addNews,updateNewsPage,updateNews,deleteNews}=require('../controllers/article.controller.js');
-const{allComments}=require('../controllers/comment.controller.js');
+const{allComments,updateCommentStatus,deleteComment}=require('../controllers/comment.controller.js');
 const isLoggedin=require('../middleware/isLoggedin.js');
 const isAdmin=require('../middleware/isadmin.js');
 const upload=require('../middleware/multer.js');
@@ -44,6 +44,10 @@ router.delete('/delete-article/:id',isLoggedin,deleteNews);
 
 //show comments
 router.get('/comments',isLoggedin,allComments);
+router.put('/update-comment-status/:id',isLoggedin,updateCommentStatus);
+router.delete('/delete-comment/:id',isLoggedin,deleteComment);
+
+
 
 
 //404 Middleware
