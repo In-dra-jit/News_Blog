@@ -7,6 +7,7 @@ const settingModel=require('../models/settings.model.js');
 const moongose = require('mongoose');
 const mongoose = require('mongoose');
 const paginate=require('../utils/paginate.js');
+const createError=require('../utils/error-meesage.js');
 
 const index=async(req,res)=>{
     // const news=await NewsModel.find({})
@@ -48,11 +49,11 @@ const index=async(req,res)=>{
 res.render('index', { paginitData, category: null });
   }
 
-const articleBycategory=async(req,res)=>{
+const articleBycategory=async(req,res,next)=>{
    const category = await CategoryModel.findOne({ slug: req.params.name });
 
     if(!category){
-        return res.status(400).send("No category Found");
+        return next(createError(404,'Category not found'));
     }
     //  const news=await NewsModel.find({category:category._id})
     // .populate('category',{'name':1,'slug':1})
@@ -83,7 +84,7 @@ const articleBycategory=async(req,res)=>{
 
     res.render('category',{paginitData,category});
 }
-const singleArticle = async (req, res) => {
+const singleArticle = async (req, res,next) => {
 
  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).send("Invalid article ID");
@@ -93,7 +94,7 @@ const singleArticle = async (req, res) => {
     .populate('author', 'fullname');
 
   if (!Singlenews) {
-    return res.status(404).send("Article not found");
+    return next (createError(404,'Article not found'));
   }
 
   //Get all Comments
@@ -144,10 +145,10 @@ const search=async(req,res)=>{
 
     res.render('search',{paginitData,serachQuery,category: null});
 }
-const author=async(req,res)=>{
+const author=async(req,res,next)=>{
   const author=await UserModel.findOne({_id:req.params.name});
   if(!author){
-    return res.status(400).send("No author Found");
+    return next(createError(404,'Author not found'));
   }
     // const news=await NewsModel.find({author:req.params.name})
     // .populate('category',{'name':1,'slug':1})

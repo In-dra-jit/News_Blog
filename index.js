@@ -27,8 +27,8 @@ app.set('view engine', 'ejs');
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Database Connected'))
     .catch(err => console.log(err));
-//Routes
-app.use('/',frontend);
+
+
 
 
 //Admin layout
@@ -37,6 +37,8 @@ app.use('/admin',(req,res,next)=>{
     next();
 });//->admin layout
 app.use('/admin',admin);
+// Frontend Routes
+app.use('/',frontend);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
